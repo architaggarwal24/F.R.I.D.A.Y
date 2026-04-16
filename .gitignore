@@ -4,6 +4,10 @@ venv/
 # ChromaDB runtime data
 friday/memory/chroma_store/
 
+# Calendar API credentials
+friday/calendar/token.json
+friday/calendar/credentials.json
+
 # Python bytecode
 __pycache__/
 *.pyc
