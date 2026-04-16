@@ -72,3 +72,24 @@ def test_chain_source_is_web_when_memory_empty(empty_memories):
         mock_search.return_value = []
         result = ChainExecutor.run("test", "system")
         assert result["source"] == "web+memory"
+
+
+def test_chain_reminder_trigger_detected():
+    fake_result = {
+        "status": "set", "memory_id": "x", "event_id": "y",
+        "title": "test", "datetime": "2026-04-20T15:00:00"
+    }
+    with patch("friday.tools.calendar.set_reminder", return_value=fake_result):
+        result = ChainExecutor.run("remind me to call Pepper on Friday at 5pm", "system")
+    assert result["source"] == "reminder_set"
+
+
+def test_chain_non_reminder_uses_normal_chain():
+    result = ChainExecutor.run("what is the weather today", "system")
+    assert result["source"] != "reminder_set"
+
+
+def test_chain_reminder_failure_falls_through():
+    with patch("friday.tools.calendar.set_reminder", side_effect=Exception("fail")):
+        result = ChainExecutor.run("remind me to do something tomorrow", "system")
+    assert isinstance(result, dict)

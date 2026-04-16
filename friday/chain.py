@@ -3,10 +3,37 @@ from friday.tools.search import search_web
 
 MEMORY_SUFFICIENCY_THRESHOLD = 0.4
 
+REMINDER_TRIGGERS = [
+    "remind me", "don't let me forget", "remember to",
+    "schedule", "put on my calendar", "set a reminder",
+    "add to my calendar"
+]
+
 
 class ChainExecutor:
     @staticmethod
     def run(utterance: str, base_system_prompt: str) -> dict:
+        if any(trigger in utterance.lower() for trigger in REMINDER_TRIGGERS):
+            try:
+                from friday.tools.calendar import set_reminder, parse_datetime
+                dt_result = parse_datetime(utterance)
+                dt_str = dt_result.get("datetime", "") if dt_result.get("status") == "ok" else ""
+                if dt_str:
+                    reminder_result = set_reminder(utterance, dt_str)
+                else:
+                    reminder_result = {"status": "error", "reason": "no datetime found"}
+                if reminder_result.get("status") in ("set", "set_memory_only"):
+                    context = f"Reminder set: {utterance}"
+                else:
+                    context = f"Could not set reminder: {reminder_result.get('reason')}"
+                return {
+                    "system_prompt": context + "\n\n" + base_system_prompt,
+                    "context": context,
+                    "source": "reminder_set"
+                }
+            except Exception:
+                pass
+
         try:
             memories = recall(utterance, limit=3)
         except Exception:
