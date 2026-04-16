@@ -14,55 +14,37 @@ from friday.tools.memory import (
 
 @pytest.fixture(autouse=True)
 def clean_chroma_client():
-    """Reset the module-level singletons and wipe the persist store before each test."""
-    import gc
-    import shutil
+    """Use a unique throwaway collection per test to avoid file lock / state bleed issues."""
     import friday.tools.memory as memory_module
+    from uuid import uuid4
 
-    store_path = CHROMA_PERSIST_PATH
-    if os.path.exists(store_path):
-        def onerror(func, path, exc_info):
-            import stat
-            if not os.access(path, os.W_OK):
-                os.chmod(path, stat.S_IWUSR)
-            try:
-                os.unlink(path)
-            except (PermissionError, FileNotFoundError):
-                pass
-
-        try:
-            shutil.rmtree(store_path, onerror=onerror)
-        except (PermissionError, FileNotFoundError):
-            pass
-
+    # Before test: point to a fresh throwaway collection
+    memory_module._collection_name_override = f"test_{uuid4().hex}"
     memory_module._chroma_client = None
     memory_module._embedding_model = None
-    gc.collect()
 
     yield
 
+    # After test: delete the throwaway collection and reset
+    try:
+        client = memory_module._get_client()
+        client.delete_collection(memory_module._collection_name_override)
+    except Exception:
+        pass
+    memory_module._collection_name_override = None
     memory_module._chroma_client = None
     memory_module._embedding_model = None
-    gc.collect()
-
-    if os.path.exists(store_path):
-        def onerror(func, path, exc_info):
-            import stat
-            if not os.access(path, os.W_OK):
-                os.chmod(path, stat.S_IWUSR)
-            try:
-                os.unlink(path)
-            except (PermissionError, FileNotFoundError):
-                pass
-
-        try:
-            shutil.rmtree(store_path, onerror=onerror)
-        except (PermissionError, FileNotFoundError):
-            pass
 
 
 def test_get_collection_creates_store_and_returns_same():
     """Calling _get_collection() twice should create chroma_store/ and return same collection."""
+    import friday.tools.memory as memory_module
+
+    # Temporarily clear the override to test base COLLECTION_NAME behavior
+    saved_override = memory_module._collection_name_override
+    memory_module._collection_name_override = None
+    memory_module._chroma_client = None
+
     store_path = CHROMA_PERSIST_PATH
 
     # First call — should create the directory
@@ -74,6 +56,10 @@ def test_get_collection_creates_store_and_returns_same():
     col2 = _get_collection()
     assert col2.name == COLLECTION_NAME
     assert col1.name == col2.name
+
+    # Restore the autouse fixture's override for subsequent tests
+    memory_module._chroma_client = None
+    memory_module._collection_name_override = saved_override
 
 
 def test_remember_stores_entry():

@@ -11,6 +11,7 @@ from enum import Enum
 
 _chroma_client = None
 _embedding_model = None
+_collection_name_override: str | None = None
 
 
 def _get_client() -> PersistentClient:
@@ -24,7 +25,8 @@ def _get_client() -> PersistentClient:
 def _get_collection():
     """Get or create the memory collection (singleton)."""
     client = _get_client()
-    return client.get_or_create_collection(name=COLLECTION_NAME)
+    name = _collection_name_override if _collection_name_override else COLLECTION_NAME
+    return client.get_or_create_collection(name=name)
 
 
 def _get_embedding_model():

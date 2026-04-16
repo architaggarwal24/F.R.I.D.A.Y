@@ -1,5 +1,6 @@
 chromadb
 sentence-transformers
+ddgs
 mcp
 pytest
 pytest-asyncio

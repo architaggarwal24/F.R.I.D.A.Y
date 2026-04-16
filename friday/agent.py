@@ -1,33 +1,12 @@
 """Voice turn handler — assembles prompt/context and calls the LLM."""
 
-import json
-from friday.tools.memory import recall
+from friday.chain import ChainExecutor
 
 
 def build_system_prompt(base_system_prompt: str, user_utterance: str) -> str:
-    """Build the system prompt, auto-injecting relevant memory context.
-
-    Args:
-        base_system_prompt: The base system prompt string.
-        user_utterance: The user's voice utterance for this turn.
-
-    Returns:
-        The (possibly augmented) system prompt with memory context prepended.
-    """
-    try:
-        memories = recall(user_utterance, limit=3)
-    except Exception:
-        # Silently continue if recall fails — never surface to user
-        memories = []
-
-    if not memories:
-        return base_system_prompt
-
-    # Prepend relevant memory context block
-    memory_block = "Relevant memory context:\n- " + "\n- ".join(
-        m["content"] for m in memories
-    )
-    return memory_block + "\n\n" + base_system_prompt
+    """Build the system prompt using ChainExecutor (backward-compatible)."""
+    result = ChainExecutor.run(user_utterance, base_system_prompt)
+    return result["system_prompt"]
 
 
 def voice_turn(
@@ -47,11 +26,10 @@ def voice_turn(
     Returns:
         A dict with at least "system_prompt" key; optionally "response" from LLM.
     """
-    system_prompt = build_system_prompt(base_system_prompt, user_utterance)
+    result = ChainExecutor.run(user_utterance, base_system_prompt)
 
     if call_llm_fn is None:
-        # No-op for testing — return what the system prompt would be
-        return {"system_prompt": system_prompt}
+        return {"system_prompt": result["system_prompt"], "source": result["source"]}
 
-    response = call_llm_fn(system_prompt, user_utterance)
-    return {"system_prompt": system_prompt, "response": response}
+    response = call_llm_fn(result["system_prompt"], user_utterance)
+    return {"system_prompt": result["system_prompt"], "source": result["source"], "response": response}

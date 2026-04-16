@@ -12,62 +12,28 @@ from friday.tools.memory import (
 from friday.agent import build_system_prompt, voice_turn
 
 
-def _wipe_store():
-    """Wipe the ChromaDB persist store, handling Windows file locks."""
-    import gc
-    import shutil
-    import time
-    import friday.tools.memory as memory_module
-
-    store_path = CHROMA_PERSIST_PATH
-    if not os.path.exists(store_path):
-        return
-
-    # Close the ChromaDB client before deleting files
-    if memory_module._chroma_client is not None:
-        try:
-            memory_module._chroma_client = None
-        except Exception:
-            pass
-
-    time.sleep(0.1)
-    gc.collect()
-
-    import stat
-
-    def onerror(func, path, exc_info):
-        # On Windows, try to make the file writable before retrying
-        try:
-            os.chmod(path, stat.S_IWUSR | stat.S_IRUSR)
-            os.unlink(path)
-        except OSError:
-            pass
-
-    try:
-        shutil.rmtree(store_path, onerror=onerror)
-    except OSError:
-        pass
-
-
 @pytest.fixture(autouse=True)
 def clean_chroma_client():
-    """Reset the module-level singletons and wipe the persist store before each test."""
-    import gc
+    """Use a unique throwaway collection per test to avoid file lock / state bleed issues."""
     import friday.tools.memory as memory_module
+    from uuid import uuid4
 
+    # Before test: point to a fresh throwaway collection
+    memory_module._collection_name_override = f"test_{uuid4().hex}"
     memory_module._chroma_client = None
     memory_module._embedding_model = None
-    gc.collect()
-
-    _wipe_store()
 
     yield
 
+    # After test: delete the throwaway collection and reset
+    try:
+        client = memory_module._get_client()
+        client.delete_collection(memory_module._collection_name_override)
+    except Exception:
+        pass
+    memory_module._collection_name_override = None
     memory_module._chroma_client = None
     memory_module._embedding_model = None
-    gc.collect()
-
-    _wipe_store()
 
 
 @pytest.fixture
@@ -116,18 +82,18 @@ def test_auto_recall_injects_memory_into_system_prompt(seed_memory):
 
 
 def test_auto_recall_no_injection_when_no_memories():
-    """When recall returns no results, the base system prompt is used unchanged."""
+    """When recall returns no results, ChainExecutor falls back to web search."""
     result = voice_turn(
         user_utterance="tell me about quantum physics",
         base_system_prompt="You are F.R.I.D.A.Y, a voice AI assistant.",
     )
 
     assert "system_prompt" in result
+    # ChainExecutor escalates to web search when memory is empty
+    # so source should be web+memory and system_prompt should contain web results
+    assert result.get("source") == "web+memory"
     system_prompt = result["system_prompt"]
-
-    # No memory context block should be prepended
-    assert "Relevant memory context:" not in system_prompt
-    assert system_prompt == "You are F.R.I.D.A.Y, a voice AI assistant."
+    assert "You are F.R.I.D.A.Y, a voice AI assistant." in system_prompt
 
 
 def test_voice_turn_returns_both_system_prompt_and_response():
