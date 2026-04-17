@@ -128,6 +128,7 @@ def recall(query: str, limit: int = TOP_K_DEFAULT) -> list[dict]:
                 continue
             metadata = results["metadatas"][0][i]
             memories.append({
+                "memory_id": results["ids"][0][i],
                 "content": doc,
                 "category": metadata.get("category"),
                 "timestamp": metadata.get("timestamp"),

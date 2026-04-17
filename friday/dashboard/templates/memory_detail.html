@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 style="color:#00d4ff; margin-bottom:1.5rem;">// MEMORY DETAIL</h2>
+
+<div class="card">
+  <div class="id">
+    ID: {{ memory.memory_id }}
+    <span class="badge">{{ memory.get('category', 'unknown') }}</span>
+  </div>
+  <div style="margin:1rem 0; color:#e0e0e0; line-height:1.6;">{{ memory.content }}</div>
+  <div class="meta">
+    source: {{ memory.get('source', 'unknown') }} |
+    timestamp: {{ memory.get('timestamp', '')[:19] }}
+  </div>
+</div>
+
+<h3 style="color:#00d4ff; margin:1.5rem 0 0.5rem;">EDIT</h3>
+<form method="post" action="/memory/{{ memory.memory_id }}/edit" style="margin-bottom:1rem;">
+  <textarea name="content" rows="5" style="width:100%; margin-bottom:0.5rem;">{{ memory.content }}</textarea>
+  <button type="submit">SAVE CHANGES</button>
+</form>
+
+<form method="post" action="/memory/{{ memory.memory_id }}/delete" onsubmit="return confirm('Delete this memory?');">
+  <button type="submit" class="btn-danger">DELETE MEMORY</button>
+</form>
+
+<div style="margin-top:2rem;">
+  <a href="/">&larr; Back to Memory Bank</a>
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+[
+  {
+    "memory_id": "30afd799-9944-47d1-9e0f-3748ecf16005",
+    "content": "Boss prefers dark mode on all interfaces",
+    "timestamp": "2026-04-16T07:55:16.759234+00:00",
+    "category": "preference",
+    "source": "explicit"
+  },
+  {
+    "memory_id": "cbcbe7ef-2a13-4ebe-848e-718e1e4b9a1d",
+    "content": "Boss prefers dark mode",
+    "category": "preference",
+    "timestamp": "2026-04-16T07:55:31.258289+00:00",
+    "source": "explicit"
+  },
+  {
+    "memory_id": "ec446343-50d1-488e-9933-70d1311a4cd3",
+    "content": "Remember to book meeting room",
+    "category": "task",
+    "source": "explicit",
+    "timestamp": "2026-04-16T07:55:37.527849+00:00"
+  },
+  {
+    "memory_id": "63e4d563-efb5-4851-9741-4f4d486ce9b9",
+    "content": "Water the plants",
+    "timestamp": "2026-04-16T07:55:45.021915+00:00",
+    "source": "explicit",
+    "category": "reminder"
+  },
+  {
+    "memory_id": "5e81eb01-1bdd-497e-b8d1-249144ff7cf1",
+    "content": "The project deadline is Friday",
+    "timestamp": "2026-04-16T07:55:51.325485+00:00",
+    "category": "task",
+    "source": "explicit"
+  },
+  {
+    "memory_id": "4017f80b-5bed-448a-870e-45a8a4920b63",
+    "content": "Boss prefers concise responses",
+    "timestamp": "2026-04-16T07:56:49.328155+00:00",
+    "source": "explicit",
+    "category": "preference"
+  },
+  {
+    "memory_id": "6f7dda8c-ee85-42cb-8aff-6f46bbd46645",
+    "content": "I prefer dark mode on everything",
+    "source": "explicit",
+    "category": "preference",
+    "timestamp": "2026-04-16T07:57:13.282527+00:00"
+  },
+  {
+    "memory_id": "bb7d7566-17f4-4ece-a695-5124aa12a504",
+    "content": "Remind me to review the AutoClip workflow on Sunday",
+    "timestamp": "2026-04-16T07:57:13.322246+00:00",
+    "source": "explicit",
+    "category": "reminder"
+  },
+  {
+    "memory_id": "eb574327-789d-49fb-b143-aca573310dfe",
+    "content": "Boss prefers dark mode on all interfaces",
+    "timestamp": "2026-04-16T08:03:19.702688+00:00",
+    "category": "preference",
+    "source": "explicit"
+  },
+  {
+    "memory_id": "a4ba1ba2-f2ed-43ae-b5f6-dbcdfc7effef",
+    "content": "Boss prefers concise responses",
+    "category": "preference",
+    "source": "explicit",
+    "timestamp": "2026-04-16T08:04:54.019031+00:00"
+  },
+  {
+    "memory_id": "06b28fd2-5207-4618-a02e-d8b5e7950175",
+    "content": "I prefer dark mode on all interfaces",
+    "source": "explicit",
+    "timestamp": "2026-04-17T18:47:25.876553+00:00",
+    "category": "preference"
+  },
+  {
+    "memory_id": "b29b98e0-0ee6-4009-b92a-a3fe9d8c9d9e",
+    "content": "Always respond concisely",
+    "source": "explicit",
+    "timestamp": "2026-04-17T18:47:25.916238+00:00",
+    "category": "preference"
+  },
+  {
+    "memory_id": "cb758ca2-cadf-4398-b7a9-6045807ef4ce",
+    "content": "Review AutoClip workflow on Sunday",
+    "timestamp": "2026-04-17T18:47:25.958732+00:00",
+    "category": "reminder",
+    "source": "explicit"
+  },
+  {
+    "memory_id": "73aaf835-5706-4fb8-ac53-84a85743e33a",
+    "content": "F.R.I.D.A.Y. uses ChromaDB for storage",
+    "source": "explicit",
+    "category": "fact",
+    "timestamp": "2026-04-17T18:47:26.003643+00:00"
+  },
+  {
+    "memory_id": "53951947-df30-4f1e-897b-274c27876956",
+    "content": "remind me to check the AutoClip analytics tomorrow at 10am",
+    "timestamp": "2026-04-17T18:52:50.910964+00:00",
+    "source": "voice",
+    "category": "reminder"
+  }
+]

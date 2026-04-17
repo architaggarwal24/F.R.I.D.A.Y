@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 style="color:#00d4ff; margin-bottom:1rem;">// SEARCH</h2>
+
+<form method="get" action="/search" style="display:flex; gap:0.5rem; margin-bottom:1.5rem;">
+  <input type="text" name="q" value="{{ query }}" placeholder="Query memories..." autofocus>
+  <button type="submit">SEARCH</button>
+</form>
+
+{% if query and results %}
+  <p style="color:#555; margin-bottom:1rem;">{{ results|length }} result(s) for "<strong style="color:#e0e0e0">{{ query }}</strong>"</p>
+  {% for r in results %}
+    <div class="card">
+      <div class="id">
+        <span class="badge" style="background:#00d4ff22;">{{ "%.2f"|format(r.relevance_score) }}</span>
+        [{{ r.memory_id[:8] }}]
+      </div>
+      <div class="content">{{ r.content }}</div>
+      <div class="meta">{{ r.get('category', '') }}</div>
+      <div style="margin-top:0.5rem;">
+        <a href="/memory/{{ r.memory_id }}"><button style="font-size:0.7rem; padding:0.2rem 0.6rem;">VIEW</button></a>
+      </div>
+    </div>
+  {% endfor %}
+{% elif query %}
+  <div class="card" style="text-align:center; color:#555;">No results for "{{ query }}".</div>
+{% else %}
+  <div class="card" style="text-align:center; color:#555;">Enter a query above.</div>
+{% endif %}
+{% endblock %}

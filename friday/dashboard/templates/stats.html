@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 style="color:#00d4ff; margin-bottom:1.5rem;">// SYSTEM STATS</h2>
+
+<div class="card">
+  <table>
+    <tr>
+      <th>METRIC</th>
+      <th>VALUE</th>
+    </tr>
+    <tr>
+      <td>Total Memories</td>
+      <td style="color:#00d4ff; font-size:1.2rem;">{{ stats.total }}</td>
+    </tr>
+    <tr>
+      <td>Store Size</td>
+      <td>{{ "%.1f"|format(stats.store_size_bytes / 1024) }} KB</td>
+    </tr>
+  </table>
+</div>
+
+{% if stats.by_category %}
+<h3 style="color:#00d4ff; margin:1.5rem 0 0.5rem;">BY CATEGORY</h3>
+<div class="card">
+  <table>
+    <tr>
+      <th>CATEGORY</th>
+      <th>COUNT</th>
+    </tr>
+    {% for cat, count in stats.by_category.items() %}
+    <tr>
+      <td>{{ cat }}</td>
+      <td style="color:#00d4ff;">{{ count }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endif %}
+
+<div style="margin-top:2rem;">
+  <a href="/export?category=">Export All (JSON)</a>
+</div>
+{% endblock %}

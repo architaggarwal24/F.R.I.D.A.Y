@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 style="color:#00d4ff; margin-bottom:1.5rem;">// MEMORY BANK</h2>
+
+{% if grouped %}
+  {% for category, memories in grouped.items() %}
+    <div style="margin-bottom:2rem;">
+      <h3 style="color:#00d4ff; border-bottom:1px solid #222; padding-bottom:0.5rem;">
+        {{ category.upper() }} <span style="color:#555; font-size:0.8rem;">({{ memories|length }})</span>
+      </h3>
+      {% for mem in memories %}
+        <div class="card">
+          <div class="id">[{{ mem.memory_id[:8] }}] <span class="badge">{{ mem.category }}</span></div>
+          <div class="content">{{ mem.content }}</div>
+          <div class="meta">source: {{ mem.get('source', 'unknown') }} | {{ mem.get('timestamp', '')[:19] }}</div>
+          <div style="margin-top:0.5rem;">
+            <a href="/memory/{{ mem.memory_id }}"><button style="font-size:0.7rem; padding:0.2rem 0.6rem;">VIEW</button></a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card" style="text-align:center; color:#555;">No memories stored.</div>
+  {% endfor %}
+{% else %}
+  <div class="card" style="text-align:center; color:#555;">No memories stored.</div>
+{% endif %}
+{% endblock %}
