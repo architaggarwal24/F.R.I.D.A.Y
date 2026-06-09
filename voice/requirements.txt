@@ -1,0 +1,8 @@
+openwakeword
+pyaudio
+groq
+elevenlabs
+python-dotenv
+websockets
+numpy
+pygame
